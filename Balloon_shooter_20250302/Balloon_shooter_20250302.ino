@@ -30,5 +30,5 @@ void loop() {
     }
   } while(dh.nextPage());
 
-  delay(50);
+  delay(10);
 }
