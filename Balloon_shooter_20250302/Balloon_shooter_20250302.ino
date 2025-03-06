@@ -1,34 +1,27 @@
-#include "Balloon_Shooter_Lib.h"
+#include "Balloon_Shooter-GunTarget-Lib.h"
 
-#define CONCURRENT_BALLOONS_TOTAL     10
+JoystickAction action;
+JoystickHandler joystickHandler;
+GeometryDisplayHandler displayHandler;
 
-GeometryDisplayHandler dh;
-
-int numOfBalls = CONCURRENT_BALLOONS_TOTAL;
-
-DemoBalloon* balls[CONCURRENT_BALLOONS_TOTAL] = { 0 };
+DemoGunTarget gunTarget(&displayHandler);
 
 void setup() {
-  randomSeed(analogRead(A3));
-  dh.begin();
-  numOfBalls = random(3, CONCURRENT_BALLOONS_TOTAL + 1);
-  for(int k=0; k<numOfBalls; k++) {
-    balls[k] = new DemoBalloon();
-    balls[k]->set(&dh);
-  }
+  Serial.begin(57600);
+  displayHandler.begin();
+  joystickHandler.begin();
 }
 
 void loop() {
-  for(int i=0; i<numOfBalls; i++) {
-    balls[i]->check();
-  }
+  joystickHandler.input(&action);
 
-  dh.firstPage();
+  gunTarget.update(action.getX(), action.getY());
+
+  displayHandler.firstPage();
   do {
-    for(int i=0; i<numOfBalls; i++) {
-      balls[i]->draw();
-    }
-  } while(dh.nextPage());
+    gunTarget.draw();
+  } while(displayHandler.nextPage());
 
-  delay(10);
+  delay(50);
 }
+
